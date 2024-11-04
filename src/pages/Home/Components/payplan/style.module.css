@@ -1,0 +1,68 @@
+.continear {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    overflow: hidden;
+    padding: 20px; 
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+}
+
+.button_card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 0 10px; 
+    margin-top: 5px;
+    margin-left: 70px;
+    width: 200px;
+    height: 100px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.3s ease; 
+}
+
+.button_card:hover {
+    background-color: #e0e0e0; 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+}
+
+.button_card:active {
+    transform: scale(0.95); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+}
+
+.payplancard h3 {
+    font-size: 16px;
+    color: #333;
+}
+
+.arrow_right {
+    cursor: pointer; 
+    font-size: 15px; 
+    position: absolute; 
+    right: 20px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background-color: white; 
+    border-radius: 50%; 
+    padding: 5px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    user-select: none;
+  }
+  
+  .arrow_left {
+    cursor: pointer;
+    font-size: 15px; 
+    position: absolute; 
+    left: 20px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background-color: white; 
+    border-radius: 50%; 
+    padding: 5px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    user-select: none;
+  }

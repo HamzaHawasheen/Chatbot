@@ -1,0 +1,75 @@
+.header-of-setting {
+    text-align: center;
+    color: black;
+    font-size: 30px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.input-name, .input-logo, .input-color {
+    text-align: center;
+    border: 2px solid #afafaf; 
+    border-radius: 4px; 
+    font-size: 16px;
+    padding: 10px;
+    font-family: 'Times New Roman', Times, serif; 
+    background-color: #f9f9f9;
+} 
+
+.label-name, .label-logo, .label-color, .start-button {
+    text-align: center;
+    display: block; 
+    font-size: 14px; 
+    color: #333; 
+    font-weight: bold; 
+    width: 12em;
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    background-color: #f9f9f9;
+    padding: 5px 0;
+}
+
+.start-button {
+    text-align: center;
+
+}
+
+.continar {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #efefef;
+    padding: 13px 0;
+}
+
+.row {
+    width: 40%;
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   justify-content: left;
+   align-items: center; 
+   gap: 30px;
+}
+
+.color-selector div {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+}
+
+.color-selector {
+    text-align: center;
+    border: 2px solid #afafaf; 
+    border-radius: 4px; 
+    font-size: 16px;
+    padding: 2px;
+    font-family: 'Times New Roman', Times, serif; 
+    background-color: #f9f9f9;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
