@@ -1,0 +1,38 @@
+.payment_options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .payment_box {
+    cursor: pointer;
+    border: 2px solid #f8c8c8;
+    border-radius: 10px;
+    width: 150px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #fff5f5;
+    padding: 10px;
+    margin-top: 8px;
+    margin-left: 18px;
+  }
+  
+  .header {
+    background-color: #f8c8c8;
+    padding: 5px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-size: 14px;
+  }
+  
+  .content h2 {
+    color: #2c2c54;
+    margin: 10px 0;
+  }
+  
+  .content p {
+    color: #ff6b6b;
+    font-size: 24px;
+    margin: 0;
+  }
+  

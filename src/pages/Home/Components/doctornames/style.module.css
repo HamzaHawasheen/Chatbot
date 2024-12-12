@@ -1,0 +1,68 @@
+.container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-right: 60px;
+}
+
+.cardButton {
+    position: relative; 
+    border-radius: 15px;
+    overflow: hidden;
+    width: 300px;
+    height: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    background-color: white;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.cardImageWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.cardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px;
+    text-align: right;
+}
+
+.therapName {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.therapist {
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.8; 
+}
+
+.showMoreButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.showMoreButton:hover {
+    background-color: #0056b3;
+}

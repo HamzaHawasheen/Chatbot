@@ -4,18 +4,49 @@ import Settings from "./settings";
 import axios from "axios";
 import ChatbotComponent from "./pages/Home/Components/chatbot";
 import ChooseProgram from "./pages/Home/Components/chooseprogram/index";
-import DateButton from "./pages/Home/Components/date";
 import DoctorsNamesListCards from "./pages/Home/Components/doctornames";
+import DateButton from "./pages/Home/Components/date";
+import ChooseTypeOfPay from "./pages/Home/Components/choosetypeofpay";
+import Exams from "./pages/Home/Components/exams";
+import ExamInformationConfirm from "./pages/Home/Components/examsconfirm";
+import Signup from "./pages/Home/Components/signup";
+import { fetchTherapistNames, searchTherapist, getTherapistDates } from "./pages/Home/Components/flowcontrol";
+
 
 const App = () => {
   const [chatBotConfig, setChatBotConfig] = useState(null);
   const [flow, setFlow] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const sessionId = "12345678-1234-1234-1234-123456789abcf";
+  const sessionId = "12345678123412341234123456789abcf";
   const [selectedProgram, setSelectedProgram] = useState(null);
-  let SelfHelpProgramList = [];
-  let DateList = [];
+  const [selectedExam, setSelectedExam] = useState(null);
+  const [showExamInfo, setShowExamInfo] = useState(false);
+  const [selectedSession, setSelectedSession] = useState(null);
+  let NotExpectedDoctor = 0;
+  let doctor_name = "";
+  let doctor_id = "";
+  let selectedProgram2 = "";
+  let selectedExamreturn = "";
+  let sessionDetails = "";
+
+
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  const handleSelectExam = (examDetails) => {
+    setSelectedExam(examDetails);
+    selectedExamreturn = examDetails;
+  };
+
+
+  const onSessionDetailes = (sessionDet) => {
+    setSelectedSession(sessionDet);
+    sessionDetails = sessionDet;
+  };
+
 
   const sendQueryToAPI = async (userMessage) => {
     try {
@@ -48,12 +79,14 @@ const App = () => {
     }
   };
 
+
   const handleStart = async (config) => {
     setChatBotConfig(config);
     try {
       const helpOptions = [
         "جلسات نفسية عن بعد",
         "برامج المساعدة الذاتية والتمارين",
+        "المقاييس والاختبارات النفسية",
         "ورش العمل وندوات الصحة النفسية اونلاين",
         "تواصل معنا من خلال الواتس اب",
         "استفسارات عامة",
@@ -65,65 +98,17 @@ const App = () => {
           component: (params) => (
             <ChatbotComponent helpOptions={helpOptions} params={params} />
           ),
-          path: () => {
-            return "defult_case";
-          },
         },
 
+
         second_start: {
+          transition: { duration: 0 },
           message: "تفضل هل لديك اي استفسار؟",
           component: (params) => (
             <ChatbotComponent helpOptions={helpOptions} params={params} />
           ),
-          path: () => {
-            return "defult_case";
-          },
         },
 
-        remote_psychological_sessions: {
-          transition: { duration: 0 },
-          path: "ask_doctor",
-        },
-
-        self_help_and_exercise_programs: {
-          message: "يرجى اختيار اسم البرنامج المراد معرفة تفاصيل أكثر عنه",
-          transition: { duration: 0 },
-          chatDisabled: false,
-          path: async (params) => {
-            const SelfHelpProgram = await sendQueryToAPI(
-              "أذكر جميع -ما لا يقل عن عشرة- دورات وبرامج وتمارين مساعدة ذاتية تعزز من صحتنا النفسية في حاكيني . أذكرهن على شكل نقاط ومرتبات من اول واحد لاخر واحدة بدون ترقيم ولا تنسى أي شيء . بدون اي مقدمات فقط النقاط وبدون وضع اشارة لنقطة اجعلهن تحت بعض فقط . بدون أي خيارات ليست مرتبطة بالسؤال زي الاتصال والتواصل"
-            );
-            SelfHelpProgramList = SelfHelpProgram.split("\n")
-              .map((item) => item.trim())
-              .filter((item) => item !== "");
-            return "choose_the_program";
-          },
-        },
-
-        online_mental_health_workshops_and_seminars: {
-          transition: { duration: 0 },
-          path: async (params) => {
-            const link =
-              "https://api.whatsapp.com/send/?phone=18459257682&text&type=phone_number&app_absent=0";
-            window.open(link, "_blank", "noopener,noreferrer");
-            return "repeat";
-          },
-        },
-
-        contact_us_through_whatsapp: {
-          transition: { duration: 0 },
-          path: async (params) => {
-            const link =
-              "https://api.whatsapp.com/send/?phone=18459257682&text&type=phone_number&app_absent=0";
-            window.open(link, "_blank", "noopener,noreferrer");
-            return "repeat";
-          },
-        },
-
-        general_inquiries: {
-          transition: { duration: 0 },
-          path: "prompt_again_from_general_questions",
-        },
 
         defult_case: {
           transition: { duration: 0 },
@@ -135,20 +120,102 @@ const App = () => {
           },
         },
 
+
+        remote_psychological_sessions: {
+          transition: { duration: 0 },
+          path: "ask_doctor",
+        },
+
+
+        self_help_and_exercise_programs: {
+          message: "يرجى اختيار البرنامج المراد معرفة تفاصيل أكثر عنه",
+          transition: { duration: 0 },
+          chatDisabled: false,
+          path: async (params) => {
+            return "choose_the_program";
+          },
+        },
+
+
+        exams: {
+          message: "يرجى اختيار الاختبار المراد معرفة تفاصيل أكثر عنه",
+          transition: { duration: 0 },
+          chatDisabled: false,
+          path: async (params) => {
+            const Exams_Display = <Exams
+            params={params}
+            onSelectExam={handleSelectExam}
+          />;
+            await params.injectMessage(Exams_Display);
+          },
+        },
+
+
+        question_for_exam: {
+          transition: { duration: 0 },
+          message: "هل ترغب في إجراء الاختبار؟",
+          options: ["نعم", "لا"],
+          path: async (params) => {
+            switch(params.userInput) {
+              case "نعم":
+                const ExamInformation = <ExamInformationConfirm params={params} selectedExamreturn={selectedExamreturn} />
+                await params.injectMessage(ExamInformation);
+              break;
+    
+              case "لا":
+              return("second_start");
+            }
+          }
+        }, 
+
+
+        online_mental_health_workshops_and_seminars: 
+        {
+          transition: { duration: 0 },
+          path: async (params) => {
+            const link =
+              "https://api.whatsapp.com/send/?phone=18459257682&text&type=phone_number&app_absent=0";
+            window.open(link, "_blank", "noopener,noreferrer");
+            return "repeat";
+          },
+        },
+
+
+        contact_us_through_whatsapp: 
+        {
+          transition: { duration: 0 },
+          path: async (params) => {
+            const link =
+              "https://api.whatsapp.com/send/?phone=18459257682&text&type=phone_number&app_absent=0";
+            window.open(link, "_blank", "noopener,noreferrer");
+            return "repeat";
+          },
+        },
+
+
+        general_inquiries: {
+          transition: { duration: 0 },
+          path: "prompt_again_from_general_questions",
+        },
+
+
         repeat: {
           transition: { duration: 1500 },
           path: "start_to_end",
         },
 
+
         exit: {
           message: "Good Bye",
         },
+
 
         complete: {
           message: "تفضل ولا تخجل مه هو استفسارك؟",
           options: helpOptions,
           path: "process_options",
         },
+
 
         prompt_again_from_general_questions: {
           message: "تفضل ولا تخجل ما هو استفسارك؟",
@@ -160,6 +227,7 @@ const App = () => {
           },
         },
 
+
         unknown_input: {
           message: async (params) => {
             const answer = await sendQueryToAPI(params.userInput);
@@ -169,11 +237,13 @@ const App = () => {
           path: "process_options",
         },
 
+
         ask_doctor: {
           message: "هل يوجد مستشار ما ترغب في الحجز عنده؟",
           options: ["نعم", "لا"],
           path: "process_option",
         },
+
 
         process_option: {
           transition: { duration: 0 },
@@ -183,7 +253,7 @@ const App = () => {
                 await params.injectMessage(
                   "ممتاز! من هو المستشار الذي تود حجز جلسة معه؟"
                 );
-                return "ask_doctor_name";
+                return "write_doctor_name";
               case "لا":
                 await params.injectMessage(
                   "لا تقلق. اختر واحد من المستشارين هؤلاء: "
@@ -193,96 +263,177 @@ const App = () => {
           },
         },
 
+
+        rewrite_doctor_name: {
+          transition: { duration: 0 },
+          message: "من فضلك أعد المحاولة من هو الدكتور الذي تريده؟",
+          path: "write_doctor_name"
+        },
+
+
+        write_doctor_name: {
+          path: async (params) => {
+            const WriteDoctorName = await params.userInput;
+            const ConfrimDoctorName = await searchTherapist(WriteDoctorName);
+            if (ConfrimDoctorName['status'] == "الدكتور موجود") {
+              await params.injectMessage(`المستشار ${ConfrimDoctorName['authorName']} هل هو المقصود حقا؟`);
+              doctor_name = ConfrimDoctorName['authorName'];
+              doctor_id = ConfrimDoctorName['user_id'];
+              return "confirm_doctor_name"
+            }
+            else {
+              NotExpectedDoctor = NotExpectedDoctor + 1;
+              if (NotExpectedDoctor == 4) {
+                return "ask_doctor_name"
+              }
+              else {
+                return "rewrite_doctor_name";
+              }
+            }
+          }
+        },
+
+
+        confirm_doctor_name: {
+          transition: { duration: 0 },
+          options: ["نعم", "لا"],
+          path: async (params) => {
+            switch (params.userInput) {
+              case "نعم":
+                await params.injectMessage("ممتاز. هيا بنا للخطوة القادمة");
+                await delay(2000);
+                const DateList = await getTherapistDates(doctor_id);
+
+                if (!DateList || DateList.response === false) { 
+                    await params.injectMessage("لا يوجد تواريخ حاليا للحجوزات");
+                    params.goToPath("ask_doctor");
+                } else { 
+                    await params.injectMessage("من فضلك اختر التاريخ المناسب لك");
+                    await delay(1000);
+                    const dateButtonElement = (
+                        <DateButton DateList={DateList} params={params} doctor_id={doctor_id} doctor_name={doctor_name} onSessionDetailes={onSessionDetailes} />
+                    );
+                    await params.injectMessage(dateButtonElement);
+                }
+                break;
+
+              case "لا":
+                NotExpectedDoctor = NotExpectedDoctor + 1;
+                if (NotExpectedDoctor == 4) {
+                  return "ask_doctor_name"
+                }
+                else {
+                  return "rewrite_doctor_name";
+                }
+            }
+          }
+        } ,
+
+
         ask_doctor_name: {
           transition: { duration: 0 },
-          message: "يرجى اختيار اسم المستشار",
+          message: "يرجى اختيار المستشار",
           path: async (params) => {
-            const DoctorsAllNamesList = await sendQueryToAPI(`أذكر جميع المستشارين في حاكيني؟`);
+            const DoctorsAllNamesList = await fetchTherapistNames();
             const DoctorsNamesListString = JSON.stringify(DoctorsAllNamesList);
             const DoctorsNamesListString2 = DoctorsNamesListString.split("\n")
             .map((item) => item.trim())
-            .filter((item) => item !== "");
-            const DoctorsNamesListStringConvert = JSON.parse(DoctorsNamesListString2);
+            .filter((item) => item !== "")
 
-            // const DoctorsNamesListDisplay = <DoctorsNamesListCards params={params} DoctorsNamesListString={DoctorsNamesListString2} />
-            // await params.injectMessage(DoctorsNamesListDisplay);
-
-            const DoctorName = await params.userInput;
-            const DoctorNameQuery = await sendQueryToAPI(`هل موجود الدكتور ${DoctorName}`);
-            if (DoctorNameQuery === "True") { 
-
-              const DoctorDates = await sendQueryToAPI(`ما هي التواريخ المتاحة ل ${DoctorName}`);
-              DateList = DoctorDates.split("\n")
-              .map((item) => item.trim())
-              .filter((item) => item !== "");
-  
-
-              if (DoctorDates.response === false) { 
-                await params.injectMessage("لا يوجد تواريخ حاليا للحجوزات");
-                return "ask_doctor";
-              }
-              else { 
-                await params.injectMessage("من فضلك اختر التاريخ المناسب لك");
-                const dateButtonElement = <DateButton DateList={DateList} params={params} sendQueryToAPI={sendQueryToAPI} DoctorName={DoctorName} />;
-                await params.injectMessage(dateButtonElement);
-              }
-            }
-            else if (DoctorNameQuery === "False") {
-              await params.injectMessage("عذرا المستشار غير موجود حاول مجددا");
-              return "ask_doctor";
-            }
+            const DoctorsNamesListObjects = DoctorsNamesListString2.map(item => JSON.parse(item));
+            const DoctorsNamesListDisplay = <DoctorsNamesListCards params={params} DoctorsNamesListObjects={DoctorsNamesListObjects} onSessionDetailes={onSessionDetailes} />
+            await params.injectMessage(DoctorsNamesListDisplay);
           },
         },
 
-        doctor_times_user_choose: {
-          path: async (params) => {
-            const DoctorTimesUserChoose = await params.userInput;
-            await params.injectMessage(DoctorTimesUserChoose);
-            const PayPlan = await sendQueryToAPI(` ما هي خطة الدفع ل دكتور ${DoctorTimesUserChoose}`);
-            for(let i=0; i<PayPlan.length; i++)
-            {
-              await params.injectMessage(`عدد الجلسات هو ${PayPlan[i][1]} ,$ السعر الكلي هو ${PayPlan[i][0]}`);
-            }
-            return "doctor_payplan_user_choose";
-          }
-        },
-
-        doctor_payplan_user_choose: {
-          path: async (params) => {
-            const DoctorPayPlanUserChoose = await params.userInput;
-            await params.injectMessage(DoctorPayPlanUserChoose);
-          }
-        },
 
         choose_the_program: {
           component: (params) => {
             const handleProgramSelect = (selectedProgram) => {
-              console.log("Selected Program:", selectedProgram);
+              selectedProgram2 = selectedProgram;
               params.userInput = selectedProgram;
               setSelectedProgram(selectedProgram);
             };
 
             return (
               <ChooseProgram
-                SelfHelpProgramList={SelfHelpProgramList}
                 params={params}
                 onProgramSelect={handleProgramSelect}
-                sendQueryToAPI={sendQueryToAPI}
               />
             );
           },
         },
 
-        response_for_programs: {
-          transition: { duration: 0 },
-          path: "start_to_end",
+
+        confirm_the_request: {
+          message: "هل تريد تأكيد الطلب",
+          options: ["نعم", "لا"],
+          path: async (params) => {
+            switch (params.userInput) {
+              case "نعم": 
+                console.log(sessionDetails);
+                await params.injectMessage("من فضلك ادخل الايميل الخاص بك")
+                const signupPage = <Signup params={params} sessionDetails={sessionDetails} />
+                await params.injectMessage(signupPage);
+                break;
+              case "لا":
+                await params.injectMessage("هيا بنا نقوم بإعادة حجز الجلسة")
+                await params.goToPath("ask_doctor");
+            }
+          }
         },
 
-        start_to_end: {
+
+        confirm_response_for_programs: {
+          message: "هل ترغب في الاشتراك الذي يمنحك الوصول إلى جميع برامجنا المتاحة؟",
+          options: ["نعم", "لا"],
+          path: async (params) => {
+            switch (params.userInput) {
+              case "نعم":
+                await params.injectMessage("حسنا هذا رائع");
+                await params.injectMessage("من فضلك اختر الاشتراك المناسب لك");
+                await params.injectMessage("لتحصل على جميع ميزات الاشتراك يرجى تحميل التطبيق على الجوال");
+                const ChooseTypeOfPayDisplay = <ChooseTypeOfPay params={params} />;
+                await params.injectMessage(ChooseTypeOfPayDisplay);
+              break;
+
+              case "لا":
+              return "second_start";
+            }
+        }
+      },
+
+
+      gold_subscription: {
+        transition: { duration: 0 },
+        path: async (params) => {
+          const link =
+          "https://buy.stripe.com/28odUNfmZ3hrgBq8xk?client_reference_id=${user?.id}&utm_content=2&prefilled_promo_code=${m_name}";
+          window.open(link, "_blank", "noopener,noreferrer");
+          await params.injectMessage("نتمنى لك وقتا سعيدا");
+          return "second_start";
+        }
+      },
+
+
+      selver_subscription: {
+        transition: { duration: 0 },
+        path: async (params) => {
+          const link =
+          "https://buy.stripe.com/7sI4kd0s5bNX0CsdRG?client_reference_id=${user?.id}&utm_content=2&prefilled_promo_code=${y_name}";
+          window.open(link, "_blank", "noopener,noreferrer");
+          await params.injectMessage("نتمنى لك وقتا سعيدا");
+          return "second_start";
+        }
+      },
+
+
+      start_to_end: {
           transition: { duration: 3500 },
           path: "second_start",
         },
       };
+
 
       setFlow(newFlow);
     } catch (error) {
@@ -311,11 +462,12 @@ const App = () => {
         showAvatar: true,
       },
       chatHistory: {
-        storageKey: "chatbot_history_key",
         disabled: false,
-        maxEntries: 50,
+        maxEntries: 20,
         viewChatHistoryButtonText: "Load Chat History",
         chatHistoryLineBreakText: "----- Previous Chat History -----",
+        storageType: "LOCAL_STORAGE",
+        autoLoad: false,
       },
     };
   };

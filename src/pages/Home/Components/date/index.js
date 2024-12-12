@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./style.module.css";
-import TimeButton from "../time/index";
+import TimeZoneSelectList from "../timezone";
+import getTimeZonesData from "../../../../timezones";
 
 const DateCard = ({ date }) => (
     <div id="datecard">
@@ -8,8 +9,9 @@ const DateCard = ({ date }) => (
     </div>
 );
 
-const DateButton = ({ DateList, params, sendQueryToAPI, DoctorName }) => {
+const DateButton = ({ DateList, params, doctor_id, doctor_name, onSessionDetailes }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [selectedDate, setSelectedDate] = useState(DateList[currentIndex]);
 
     const handleNextRight = () => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % DateList.length);
@@ -17,20 +19,21 @@ const DateButton = ({ DateList, params, sendQueryToAPI, DoctorName }) => {
   
     const handleNextLeft = () => {
       setCurrentIndex((prevIndex) => (prevIndex - 1 + DateList.length) % DateList.length);
+
     };
 
     const handleProgramSelect = async () => {
+      console.log(doctor_id)
         const selectedDate = DateList[currentIndex];
-        await params.injectMessage("من فضلك اختر الوقت المناسب لك");
+        console.log(selectedDate);
+        const formattedDate = selectedDate.split('/').reverse().join('/');
+        params.selectedDate = selectedDate;
 
-        const DoctorDatesUserChooseQuery = await sendQueryToAPI(`ما هي الأوقات المتاحة في ${selectedDate} ؟`);
-        let TimeList = String(DoctorDatesUserChooseQuery)
-        .split("\n")
-        .map((item) => item.trim())
-        .filter((item) => item !== "");
-        const timeButtonElement = <TimeButton params={params} sendQueryToAPI={sendQueryToAPI} TimeList={TimeList} DoctorName={DoctorName} selectedDate={selectedDate} />
+        const tiemezoneget = getTimeZonesData();
 
-        params.injectMessage(timeButtonElement);
+        await params.injectMessage("من فضلك اختر المنطقة الزمنية الخاصة بك");
+        const timeButtonElement = <TimeZoneSelectList params={params} doctor_id={doctor_id} doctor_name={doctor_name} tiemezoneget={tiemezoneget} selectedDate={selectedDate} formattedDate={formattedDate} onSessionDetailes={onSessionDetailes} />
+        await params.injectMessage(timeButtonElement);
         params.goToPath("doctor_times_user_choose"); 
       };
 

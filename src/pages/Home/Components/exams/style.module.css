@@ -1,0 +1,108 @@
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 300px;
+  position: relative;
+}
+
+.card {
+  border-radius: 20px; 
+  text-align: right; 
+  font-family: Arial, sans-serif;
+  background-color: white;
+  border: 1px solid #337ab7; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  width: 250px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+
+.programImage {
+  width: 230px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 20px; 
+  margin-bottom: 15px;
+  background-color: white;
+  align-items: right;
+  text-align: right;
+  padding-right: 2px;
+}
+
+.textContainer h3 {
+  font-size: 20px;
+  color: #337ab7;
+  font-weight: bold;
+  font-family: inherit;
+  margin-bottom: 10px;
+  line-height: 1.2;
+  text-align: right;
+  margin-bottom: 4px;
+  margin-top: 0;
+}
+
+.textContainer p {
+  font-size: 13px;
+  color: #337ab7;
+  margin: 0 0 15px;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.timeContainer {
+  display: flex;
+  justify-content: right;
+  font-size: 14px;
+  color: #337ab7;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.timeIcon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  margin-left: 5px;
+}
+
+.start_exam {
+  display: flex;
+  justify-content: right;
+  color: #337ab7;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.arrow_right {
+  cursor: pointer; 
+  font-size: 15px; 
+  position: absolute; 
+  right: 10px; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  background-color: white; 
+  border-radius: 50%; 
+  padding: 5px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  user-select: none;
+}
+
+.arrow_left{
+  cursor: pointer;
+  font-size: 15px; 
+  position: absolute; 
+  left: 10px; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  background-color: white; 
+  border-radius: 50%; 
+  padding: 5px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  user-select: none;
+}

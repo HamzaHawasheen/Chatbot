@@ -5,7 +5,7 @@
   margin: 0; 
   flex-wrap: nowrap; 
   width: 310px;
-  height: 250px;
+  height: 270px;
   margin-top: 8px;
 }
 
@@ -94,7 +94,8 @@ img {
 .self_help_and_exercise_programs,
 .online_mental_health_workshops_and_seminars,
 .contact_us_through_whatsapp,
-.general_inquiries {
+.general_inquiries,
+.exams {
   display: inline-block; 
   padding: 10px 0px;
   color: #b97000; 
